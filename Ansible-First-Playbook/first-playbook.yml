@@ -1,0 +1,29 @@
+---
+- name: My First Ansible Playbook
+  hosts: servers
+  become: true
+
+  tasks:
+
+    - name: Create Ansible demo directory
+      ansible.builtin.file:
+        path: /opt/ansible-demo
+        state: directory
+        mode: '0755'
+
+    - name: Create hello file
+      ansible.builtin.file:
+        path: /opt/ansible-demo/hello.txt
+        state: touch
+        mode: '0644'
+
+    - name: Install htop
+      ansible.builtin.package:
+        name: htop
+        state: present
+
+    - name: Write message to hello file
+      ansible.builtin.copy:
+        content: "Hello from Ansible!\n"
+        dest: /opt/ansible-demo/hello.txt
+        mode: '0644'
