@@ -1,0 +1,138 @@
+---
+- name: Collect System Information
+  hosts: servers
+  gather_facts: true
+
+  vars:
+    report_name: "System Information Report"
+    memory_warning_threshold: 4000
+
+  tasks:
+
+    - name: Display report name
+      ansible.builtin.debug:
+        msg: "{{ report_name }}"
+
+    - name: Get uptime
+      ansible.builtin.command: uptime
+      register: uptime_result
+      changed_when: false
+
+    - name: Display uptime
+      ansible.builtin.debug:
+        msg: "Uptime: {{ uptime_result.stdout }}"
+
+    - name: Display hostname
+      ansible.builtin.debug:
+        msg: "Hostname: {{ ansible_facts['hostname'] }}"
+
+    - name: Display operating system
+      ansible.builtin.debug:
+        msg: "OS: {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"
+
+    - name: Display kernel
+      ansible.builtin.debug:
+        msg: "Kernel: {{ ansible_facts['kernel'] }}"
+
+    - name: Display CPU
+      ansible.builtin.debug:
+        msg: "CPU: {{ ansible_facts['processor_vcpus'] }} vCPUs"
+
+    - name: Display memory
+      ansible.builtin.debug:
+        msg: "RAM: {{ ansible_facts['memtotal_mb'] }} MB"
+
+    - name: Display IP address
+      ansible.builtin.debug:
+        msg: "IP: {{ ansible_facts['default_ipv4']['address'] }}"
+
+    - name: Check memory threshold
+      ansible.builtin.debug:
+        msg: "WARNING: System has less than {{ memory_warning_threshold }} MB RAM"
+      when: ansible_facts['memtotal_mb'] < memory_warning_threshold
+
+    - name: Check memory threshold
+      ansible.builtin.debug:
+        msg: "WARNING: System has less than {{ memory_warning_threshold }} MB RAM"
+      when: ansible_facts['memtotal_mb'] < memory_warning_threshold
+
+    - name: Get root filesystem usage
+      ansible.builtin.command: df -h /
+      register: disk_result
+      changed_when: false
+
+    - name: Display disk usage
+      ansible.builtin.debug:
+        msg: "{{ disk_result.stdout }}"
+
+    - name: Display filesystem facts
+      ansible.builtin.debug:
+        msg: >-
+          Mount: {{ item.mount }}
+          | Total: {{ item.size_total }} bytes
+          | Available: {{ item.size_available }} bytes
+      loop: "{{ ansible_facts['mounts'] }}"
+    - name: Calculate root filesystem usage
+      ansible.builtin.set_fact:
+        root_disk_usage: >-
+          {{
+            (
+              100 -
+              (
+                ansible_facts['mounts']
+                | selectattr('mount', 'equalto', '/')
+                | map(attribute='size_available')
+                | first
+                /
+                (
+                  ansible_facts['mounts']
+                  | selectattr('mount', 'equalto', '/')
+                  | map(attribute='size_total')
+                  | first
+                )
+                * 100
+              )
+            ) | round(1)
+          }}
+
+    - name: Display root disk usage
+      ansible.builtin.debug:
+        msg: "Root filesystem usage: {{ root_disk_usage }}%"
+
+    - name: Disk usage warning
+      ansible.builtin.debug:
+        msg: "WARNING: Root filesystem usage is above 80%"
+      when: root_disk_usage | float > 80
+
+    - name: Disk usage status
+      ansible.builtin.debug:
+        msg: "Disk status: OK"
+      when: root_disk_usage | float <= 80
+    - name: Build system report
+      ansible.builtin.set_fact:
+        system_report:
+          hostname: "{{ ansible_facts['hostname'] }}"
+          os: "{{ ansible_facts['distribution'] }}"
+          os_version: "{{ ansible_facts['distribution_version'] }}"
+          kernel: "{{ ansible_facts['kernel'] }}"
+          cpu_vcpus: "{{ ansible_facts['processor_vcpus'] }}"
+          memory_mb: "{{ ansible_facts['memtotal_mb'] }}"
+          ip_address: "{{ ansible_facts['default_ipv4']['address'] }}"
+          uptime: "{{ uptime_result.stdout | trim }}"
+          root_disk_usage: "{{ root_disk_usage }}"
+
+    - name: Display consolidated system report
+      ansible.builtin.debug:
+        msg:
+          - "========================================"
+          - "{{ report_name }}"
+          - "========================================"
+          - "Hostname: {{ system_report.hostname }}"
+          - "OS: {{ system_report.os }} {{ system_report.os_version }}"
+          - "Kernel: {{ system_report.kernel }}"
+          - "CPU: {{ system_report.cpu_vcpus }} vCPUs"
+          - "RAM: {{ system_report.memory_mb }} MB"
+          - "IP Address: {{ system_report.ip_address }}"
+          - "Uptime: {{ system_report.uptime }}"
+          - "Root Disk Usage: {{ system_report.root_disk_usage }}%"
+          - "========================================"
