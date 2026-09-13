@@ -1,0 +1,12 @@
+---
+- name: Test Ansible Inventory
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Display host information
+      ansible.builtin.debug:
+        msg:
+          - "Hostname: {{ inventory_hostname }}"
+          - "Role: {{ server_role | default('undefined') }}"
+          - "Server ID: {{ server_id | default('undefined') }}"

@@ -1,0 +1,2 @@
+server_role: web
+http_port: 80

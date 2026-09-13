@@ -1,0 +1,2 @@
+server_role: database
+db_port: 5432
