@@ -1,0 +1,69 @@
+---
+- name: Deploy the lab website
+  hosts: lab
+  become: true
+
+  vars:
+    website_title: "Amir's DevOps Lab"
+    website_port: 8081
+    website_root: /var/www/ansible-lab
+
+  tasks:
+    - name: Ensure Nginx is installed
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Create the website directory
+      ansible.builtin.file:
+        path: "{{ website_root }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Generate the homepage
+      ansible.builtin.template:
+        src: templates/index.html.j2
+        dest: "{{ website_root }}/index.html"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Generate the lab site configuration
+      ansible.builtin.template:
+        src: templates/website.conf.j2
+        dest: /etc/nginx/sites-available/ansible-lab
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload Nginx
+
+    - name: Disable the default site
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: Reload Nginx
+
+    - name: Enable the lab site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/ansible-lab
+        dest: /etc/nginx/sites-enabled/ansible-lab
+        state: link
+      notify: Reload Nginx
+
+    - name: Validate Nginx configuration
+      ansible.builtin.command: /usr/sbin/nginx -t
+      changed_when: false
+
+    - name: Ensure Nginx is running and enabled
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Reload Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded

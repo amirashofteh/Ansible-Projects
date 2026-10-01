@@ -1,0 +1,14 @@
+---
+- name: Generate a local homepage preview
+  hosts: lab
+  gather_facts: false
+
+  vars:
+    website_title: "Amir's DevOps Lab"
+
+  tasks:
+    - name: Generate the preview file
+      ansible.builtin.template:
+        src: templates/index.html.j2
+        dest: "{{ playbook_dir }}/homepage-preview.html"
+        mode: "0644"

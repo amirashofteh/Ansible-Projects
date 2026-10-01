@@ -1,0 +1,12 @@
+---
+- name: Inspect the lab machine
+  hosts: lab
+  gather_facts: true
+
+  tasks:
+    - name: Display machine information
+      ansible.builtin.debug:
+        msg:
+          - "Inventory name: {{ inventory_hostname }}"
+          - "Distribution: {{ ansible_facts['distribution'] }}"
+          - "OS family: {{ ansible_facts['os_family'] }}"
