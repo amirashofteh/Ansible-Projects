@@ -1,0 +1,4 @@
+---
+service_name: nginx
+service_state: started
+service_enabled: true
