@@ -1,0 +1,41 @@
+---
+- name: Manage lab packages
+  hosts: lab
+  become: true
+
+  tasks:
+    - name: Refresh the APT package index when requested
+      ansible.builtin.apt:
+        update_cache: true
+      when: refresh_package_cache | bool
+
+    - name: Ensure required packages are installed
+      ansible.builtin.apt:
+        name: "{{ packages_to_install }}"
+        state: "{{ package_install_state }}"
+
+    - name: Remove unwanted packages
+      ansible.builtin.apt:
+        name: "{{ packages_to_remove }}"
+        state: absent
+      when: packages_to_remove | length > 0
+
+    - name: Gather installed package information
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Verify required packages are installed
+      ansible.builtin.assert:
+        that:
+          - item in ansible_facts.packages
+        success_msg: "{{ item }} is installed"
+        fail_msg: "{{ item }} is missing"
+      loop: "{{ packages_to_install }}"
+
+    - name: Verify unwanted packages are removed
+      ansible.builtin.assert:
+        that:
+          - item not in ansible_facts.packages
+        success_msg: "{{ item }} is removed"
+        fail_msg: "{{ item }} is still installed"
+      loop: "{{ packages_to_remove }}"

@@ -1,0 +1,13 @@
+---
+packages_to_install:
+  - curl
+  - git
+  - vim
+  - htop
+  - wget
+  - unzip
+
+packages_to_remove: []
+
+package_install_state: present
+refresh_package_cache: false
