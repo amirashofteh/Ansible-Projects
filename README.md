@@ -1,121 +1,188 @@
-# Ansible Projects
+# Ansible Automation Projects
 
-A hands-on collection of Ansible automation projects covering configuration management, server provisioning, application deployment, security hardening, and infrastructure automation.
+A hands-on collection of **Ansible infrastructure automation projects** focused on Linux administration, configuration management, service deployment, package management, templating, and repeatable infrastructure operations.
 
-## 📚 Projects
+This repository documents my progression from Ansible fundamentals toward reusable and production-style infrastructure automation.
 
-| #  | Project                                    | Level        | Status |
-| -- | ------------------------------------------ | ------------ | ------ |
-| 01 | Ansible Fundamentals & Inventory           | Beginner     | 🚧     |
-| 02 | Ansible Ad-Hoc Commands                    | Beginner     | 🚧     |
-| 03 | User & Group Management                    | Beginner     | 🚧     |
-| 04 | Package Management                         | Beginner     | 🚧     |
-| 05 | Service Management                         | Beginner     | 🚧     |
-| 06 | File & Directory Management                | Beginner     | 🚧     |
-| 07 | SSH Key Deployment                         | Beginner     | 🚧     |
-| 08 | Nginx Deployment                           | Beginner     | 🚧     |
-| 09 | Apache Deployment                          | Beginner     | 🚧     |
-| 10 | Ansible Variables & Facts                  | Beginner     | 🚧     |
-| 11 | Ansible Templates                          | Intermediate | 🚧     |
-| 12 | Ansible Handlers                           | Intermediate | 🚧     |
-| 13 | Ansible Roles                              | Intermediate | 🚧     |
-| 14 | Multi-Server Configuration                 | Intermediate | 🚧     |
-| 15 | Docker Deployment with Ansible             | Intermediate | 🚧     |
-| 16 | Monitoring Stack Deployment                | Intermediate | 🚧     |
-| 17 | Security Hardening                         | Intermediate | 🚧     |
-| 18 | Automated Backup                           | Intermediate | 🚧     |
-| 19 | CI/CD with Ansible                         | Advanced     | 🚧     |
-| 20 | Production-Style Infrastructure Automation | Advanced     | 🚧     |
+---
+
+## 🚀 Projects
+
+| # | Project | Focus | Status |
+|---|---|---|---|
+| 01 | [Ansible First Playbook](./Ansible_First_Playbook) | Playbook fundamentals and task execution | ✅ Completed |
+| 02 | [Ansible Inventory](./Ansible_Inventory) | Inventory configuration and managed hosts | ✅ Completed |
+| 03 | [Ansible Variables & Facts](./Ansible_Variables_Facts) | Variables, gathered facts, and system information | ✅ Completed |
+| 04 | [Basic Website Deployment](./Basic_Website_Deployment) | Nginx website deployment and Jinja2 templating | ✅ Completed |
+| 05 | [Ansible Package Management](./Ansible_Package_Management) | Package installation, removal, updates, and verification | ✅ Completed |
+| 06 | [Ansible Service Management](./Ansible_Service_Management) | Nginx service lifecycle management and HTTP verification | ✅ Completed |
+
+Each project contains its own configuration, playbooks, inventory, and documentation where applicable.
+
+---
 
 ## 🗂️ Repository Structure
 
 ```text
 Ansible-Projects/
-├── README.md
+├── Ansible_First_Playbook/
+├── Ansible_Inventory/
+├── Ansible_Package_Management/
+├── Ansible_Service_Management/
+├── Ansible_Variables_Facts/
+├── Basic_Website_Deployment/
 ├── .gitignore
-├── inventories/
-├── playbooks/
-├── roles/
-├── group_vars/
-└── host_vars/
+└── README.md
 ```
+
+---
 
 ## 🛠️ Technologies
 
-* Ansible
-* YAML
-* Linux
-* SSH
-* Docker
-* Git
-* Bash
-* Python
-* Nginx
-* Prometheus
-* Grafana
+- Ansible
+- YAML
+- Linux
+- SSH
+- Nginx
+- Jinja2
+- Bash
+- Git
+- Python
 
-## 🎯 Goals
+---
 
-The purpose of this repository is to build practical Ansible skills through real-world projects rather than relying only on theoretical exercises.
+## 🎯 Objectives
 
-Projects gradually progress from basic Ansible commands and playbooks to reusable roles, multi-server automation, security hardening, application deployment, and CI/CD integration.
+The goal of this repository is to develop practical infrastructure automation skills by building and testing real Ansible workflows.
 
-## 🚀 Usage
+The projects focus on areas such as:
 
-Clone the repository:
+- Managing Linux hosts
+- Writing reusable playbooks
+- Working with inventories and variables
+- Gathering system facts
+- Automating package installation and removal
+- Managing Linux services
+- Deploying applications and configuration files
+- Using Jinja2 templates
+- Verifying infrastructure state after automation
+- Building toward multi-host and production-style automation
 
-```bash
-git clone git@github.com:amirashofteh/Ansible-Projects.git
-cd Ansible-Projects
-```
+---
 
-Check the installed Ansible version:
+## ⚙️ Environment
+
+Current Ansible development and testing is primarily performed on Linux-based environments using local and SSH-managed hosts.
+
+Check your installed version:
 
 ```bash
 ansible --version
 ```
 
-Test connectivity to managed hosts:
+Test connectivity:
 
 ```bash
-ansible all -m ping
+ansible -i inventory.ini all -m ping
 ```
 
 Run a playbook:
 
 ```bash
-ansible-playbook playbooks/example.yml
+ansible-playbook -i inventory.ini playbook.yml
 ```
 
-## 📈 Learning Path
+Inventory paths and playbook names vary by project.
+
+---
+
+## 🔍 Engineering Approach
+
+For each project, I aim to follow a repeatable workflow:
 
 ```text
-Ansible Basics
-      ↓
-Inventory & Ad-Hoc Commands
-      ↓
-Playbooks
-      ↓
-Variables & Facts
-      ↓
-Templates & Handlers
-      ↓
-Roles
-      ↓
-Multi-Server Automation
-      ↓
-Docker & Application Deployment
-      ↓
-Security Hardening
-      ↓
-CI/CD
-      ↓
-Production Automation
+Understand the task
+        ↓
+Build the inventory
+        ↓
+Write the playbook
+        ↓
+Run syntax validation
+        ↓
+Use check/diff mode when appropriate
+        ↓
+Execute automation
+        ↓
+Verify the resulting system state
+        ↓
+Troubleshoot failures
+        ↓
+Document the implementation
 ```
 
-## 📌 Status
+Useful validation commands include:
 
-This repository is actively being developed as part of a hands-on DevOps learning roadmap.
+```bash
+ansible-playbook --syntax-check playbook.yml
+```
 
-More projects will be added progressively.
+```bash
+ansible-playbook --check --diff playbook.yml
+```
 
+---
+
+## 📈 Roadmap
+
+The repository will progressively expand into more advanced Ansible concepts and infrastructure scenarios.
+
+### Next Projects
+
+- File & Directory Management
+- User & Group Management
+- SSH Key Deployment
+- Nginx Deployment
+- Ansible Templates
+- Handlers
+- Roles
+- Multi-Host Configuration
+- Docker Deployment with Ansible
+- Security Hardening
+- Automated Backups
+- Monitoring Deployment
+- CI/CD Integration
+- Production-Style Infrastructure Automation
+
+### Progression
+
+```text
+Ansible Fundamentals
+        ↓
+Inventory & Playbooks
+        ↓
+Variables & Facts
+        ↓
+Package & Service Management
+        ↓
+Templates & Handlers
+        ↓
+Roles
+        ↓
+Multi-Host Automation
+        ↓
+Application Deployment
+        ↓
+Security & Operations
+        ↓
+CI/CD Integration
+        ↓
+Production Infrastructure Automation
+```
+
+---
+
+## 📌 Repository Status
+
+🟢 **Actively maintained**
+
+This repository is part of my hands-on DevOps and infrastructure automation portfolio. New projects are added as I progress into more advanced Ansible concepts and real-world automation scenarios.
